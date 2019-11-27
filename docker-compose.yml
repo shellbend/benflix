@@ -77,8 +77,10 @@ services:
             - TRANSMISSION_RPC_PASSWORD=benflix
             - TRANSMISSION_RPC_USERNAME=benflix
             - TRANSMISSION_UMASK=002
-            - TRANSMISSION_RATIO_LIMIT=1.00
+            - TRANSMISSION_RATIO_LIMIT=0.01
             - TRANSMISSION_RATIO_LIMIT_ENABLED=true
+            - TRANSMISSION_IDLE_SEEDING_LIMIT=1
+            - TRANSMISSION_IDLE_SEEDING_LIMIT_ENABLED=true
     radarr:
         image: linuxserver/radarr
         container_name: radarr
