@@ -122,7 +122,6 @@ services:
         container_name: jackett
         volumes:
             - ${USERDIR}/docker/jackett:/config
-            - ${USERDIR}/torrents/completed:/downloads
             - /etc/localtime:/etc/localtime:ro
             - ${USERDIR}/docker/shared:/shared
         ports:
