@@ -1,32 +1,14 @@
 # [Ultimate Smart Home Media Server with Docker and Ubuntu][1]
 #
-# Install Docker on Ubuntu
-#     sudo apt-get install \
-#         apt-transport-https \
-#         ca-certificates \
-#         curl \
-#         software-properties-common 
-#
-# The article recommends installing Docker from its PPA
-#     sudo add-apt-repository \
-#         "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-#     sudo apt-get update && sudo apt-get install docker-ce
-#
-# Those instructions are likely outdated, and it's probably possible to simply
-#     sudo apt-get install docker
-#
-# Check the docker isntallation:
-#     sudo docker run hello-world
-# 
 # [1]: https://www.smarthomebeginner.com/docker-home-media-server-2018-basic/
 version: "3.6"
-# volumes:
-#     media:
-#         driver: local
-#         driver_opts:
-#             type: nfs
-#             o: addr=192.168.7.37,rw
-#             device: ":/mnt/array1/media"
+volumes:
+    media:
+        driver: local
+        driver_opts:
+            type: nfs
+            o: addr=192.168.7.37,rw,nordirplus
+            device: ":/mnt/array1/media"
 services:
     portainer:
         image: portainer/portainer
