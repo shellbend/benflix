@@ -59,9 +59,9 @@ services:
             - /etc/localtime:/etc/localtime:ro
             - ${USERDIR}/docker/transmission-vpn:/data
             - ${USERDIR}/docker/shared:/shared
-            - ${USERDIR}/torrents/watch:/data/watch
-            - ${USERDIR}/torrents/completed:/data/completed
-            - ${USERDIR}/torrents/incomplete:/data/incomplete
+            - /mnt/media/torrents/watch:/data/watch
+            - /mnt/media/torrents/completed:/data/completed
+            - /mnt/media/torrents/incomplete:/data/incomplete
         logging:
             driver: "json-file"
             options:
@@ -91,9 +91,9 @@ services:
         container_name: radarr
         volumes:
             - ${USERDIR}/docker/radarr:/config
-            - ${USERDIR}/torrents/watch:/data/watch
-            - ${USERDIR}/torrents/completed:/data/completed
-            - ${USERDIR}/torrents/incomplete:/data/incomplete
+            - /mnt/media/torrents/watch:/data/watch
+            - /mnt/media/torrents/completed:/data/completed
+            - /mnt/media/torrents/incomplete:/data/incomplete
             - media:/media
             - /etc/localtime:/etc/localtime:ro
             - ${USERDIR}/docker/shared:/shared
@@ -109,9 +109,9 @@ services:
         container_name: sonarr
         volumes:
             - ${USERDIR}/docker/sonarr:/config
-            - ${USERDIR}/torrents/watch:/data/watch
-            - ${USERDIR}/torrents/completed:/data/completed
-            - ${USERDIR}/torrents/incomplete:/data/incomplete
+            - /mnt/media/torrents/watch:/data/watch
+            - /mnt/media/torrents/completed:/data/completed
+            - /mnt/media/torrents/incomplete:/data/incomplete
             - media:/media
             - /etc/localtime:/etc/localtime:ro
             - ${USERDIR}/docker/shared:/shared
