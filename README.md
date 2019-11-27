@@ -24,11 +24,22 @@ The article recommends installing Docker from its PPA
 
 Those instructions are likely outdated, and it's probably possible to simply:
 
-    sudo apt-get install docker
+    sudo apt install docker.io
+
+Set up docker to start at boot:
+
+    sudo systemctl start docker
+    sudo systemctl enable docker
 
 Check the docker isntallation:
 
     sudo docker run hello-world
+
+
+Install Docker-Compose
+----------------------
+
+    sudo apt install docker-compose
 
 
 Add Linux User to Docker Group
@@ -55,6 +66,48 @@ Docker Folder and Permissions
     sudo setfacl -Rdm g:docker:rwx ~/docker
     sudo chmod -R 775 ~/docker
 
+Note that it may be necessary to install the `acl` package if you get a
+`sudo: setfacl: command not found` error.
+
+    sudo apt install acl
+
+
+
+Mount NAS Media Shares
+----------------------
+
+The media files themselves will be stored on the NAS, so we'll need to set up
+an automount for it. We'll use `systemd` rather than `autofs` since it is
+already built in to Debian/Raspbian/Ubuntu linux. First, create the
+`/etc/systemd/system/mnt-media.mount` file:
+
+    [Unit]
+    Description=Benflix Media Files
+
+    [Mount]
+    What=192.168.7.37:/mnt/array1/media
+    Where=/mnt/media
+    Type=nfs
+    Options=nordirplus
+
+    [Install]
+    WantedBy=multi-user.target
+
+And then the `/etc/systemd/system/mnt-media.automount` file:
+
+    [Unit]
+    Description=Benflix Automounted Media Files
+
+    [Automount]
+    Where=/mnt/media
+
+    [Install]
+    WantedBy=multi-user.target
+
+Finally, start and enable the automount:
+
+    sudo systemctl start mnt-media.automount
+    sudo systemctl enable mnt-media.automount
 
 
 
