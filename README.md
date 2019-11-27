@@ -119,6 +119,7 @@ Ports
 | Portainer          |          9000 |          9000 |
 | Organizr           |          9983 |            80 |
 | Transmission-VPN   |          9091 |          9091 |
+| Bazarr             |          6868 |          6868 |
 | Radarr             |          7878 |          7878 |
 | Sonarr             |          8989 |          8989 |
 | Jackett            |          9117 |          9117 |
