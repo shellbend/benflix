@@ -23,15 +23,15 @@ services:
             - ${USERDIR}/docker/shared:/shared
         environment:
             - TZ=${TZ}
-    organizr:
-        container_name: organizr
+    organizr-v2:
+        container_name: organizr-v2
         restart: always
-        image: linuxserver/organizr
+        image: organizrtools/organizr-v2:armhf
         volumes:
-            - ${USERDIR}/docker/organizr:/config
+            - ${USERDIR}/docker/organizr-v2:/config
             - ${USERDIR}/docker/shared:/shared
         ports:
-            - "9983:80"
+            - "80:80"
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
