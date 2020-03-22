@@ -86,6 +86,7 @@ services:
             - TRANSMISSION_RATIO_LIMIT_ENABLED=true
             - TRANSMISSION_IDLE_SEEDING_LIMIT=1
             - TRANSMISSION_IDLE_SEEDING_LIMIT_ENABLED=true
+            - TRANSMISSION_WEB_UI=combustion
     radarr:
         image: linuxserver/radarr
         container_name: radarr
