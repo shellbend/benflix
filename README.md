@@ -142,7 +142,6 @@ Ports
 | Jackett            |          9117 |          9117 |          |
 | Ombi               |          3579 |          3579 |          |
 | Pi-hole            |            53 |            53 | TCP/UDP  |
-| Pi-hole            |            67 |            67 | UDP      |
 | Pi-hole            |            80 |            80 | TCP      |
 | Pi-hole            |           443 |           443 | TCP      |
 

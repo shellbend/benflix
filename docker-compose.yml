@@ -172,7 +172,6 @@ services:
         ports:
             - "53:53/tcp"
             - "53:53/udp"
-            - "67:67/udp"
             - "80:80/tcp"
             - "443:443/tcp"
         environment:
@@ -184,11 +183,8 @@ services:
             - DNS1=1.1.1.1
             - DNS2=1.0.0.1
         volumes:
-            - ${USERDIR}/docker/pihole/etc/pihole:/etc/pihole
-            - ${USERDIR}/docker/pihole/etc/dnsmasq.d:/etc/pihole/dnsmasq.d
-        dns:
-            - 127.0.0.1
-            - 1.1.1.1
+            - ${USERDIR}/docker/pihole/pihole:/etc/pihole
+            - ${USERDIR}/docker/pihole/dnsmasq.d:/etc/pihole/dnsmasq.d
         cap_add:
             - NET_ADMIN
         restart: unless-stopped
