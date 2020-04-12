@@ -70,7 +70,7 @@ services:
         environment:
             - OPENVPN_PROVIDER=PIA
             - OPENVPN_USERNAME=p7356348
-            - OPENVPN_PASSWORD=OWmg4VvyZnk1
+            - OPENVPN_PASSWORD=${PIA_PASSWORD}
             - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60 --mute-replay-warnings --mssfix 1460
             - OPENVPN_CONFIG=CA Vancouver
             - LOCAL_NETWORK=192.168.7.0/24

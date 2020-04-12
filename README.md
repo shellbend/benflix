@@ -3,8 +3,12 @@ Benflix Docker Home Media Manager
 
 Taken mostly from the [Ultimate Smart Home Media Server with Docker][1] article.
 
+For this setup, I used a Raspberry Pi 4 running the 64-bit build of [Ubuntu
+Server 19.10][2].
+
 
 [1]: https://www.smarthomebeginner.com/docker-home-media-server-2018-basic/
+[2]: https://ubuntu.com/download/raspberry-pi
 
 
 Install Docker on Ubuntu
@@ -57,6 +61,12 @@ Edit the `/etc/environment` file to add:
     PGID=<docker group id>
     TZ="America/Phoenix"
     USERDIR="/home/<username>"
+    PIA_PASSWORD="******"
+
+Add any other private information, like passwords or API keys, as additional
+environment variables here.  If the container that needs the password supports
+Docker secrets, use those instead as anyone with access to your running
+container will have access to your environment variables and their values.
 
 
 Docker Folder and Permissions
@@ -92,6 +102,10 @@ already built in to Debian/Raspbian/Ubuntu linux. First, create the
 
     [Install]
     WantedBy=multi-user.target
+
+Note that I had to use the `nordirplus` mount option for compatibility with my
+Buffalo TeraStation NAS (TS1200D), which uses an older version of NFS that does
+not support the `rdirplus` option.
 
 And then the `/etc/systemd/system/mnt-media.automount` file:
 
