@@ -23,12 +23,12 @@ services:
             - ${USERDIR}/docker/shared:/shared
         environment:
             - TZ=${TZ}
-    organizr-v2:
-        container_name: organizr-v2
+    organizr:
+        container_name: organizr
         restart: always
-        image: organizrtools/organizr-v2:armhf
+        image: organizr/organizr:arm64
         volumes:
-            - ${USERDIR}/docker/organizr-v2:/config
+            - ${USERDIR}/docker/organizr:/config
             - ${USERDIR}/docker/shared:/shared
         ports:
             - "8080:80"
@@ -36,6 +36,7 @@ services:
             - PUID=${PUID}
             - PGID=${PGID}
             - TZ=${TZ}
+            - fmp="false"
     watchtower:
         container_name: watchtower
         restart: always
