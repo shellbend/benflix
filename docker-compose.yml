@@ -45,7 +45,8 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
         command: --schedule "0 0 4 * * *" --cleanup
     transmission:
-        image: haugene/transmission-openvpn:latest-armhf
+        container_name: transmission-vpn
+        image: haugene/transmission-openvpn:dev-arm64
         cap_add:
             - NET_ADMIN
         devices:
@@ -73,15 +74,14 @@ services:
             - OPENVPN_USERNAME=p7356348
             - OPENVPN_PASSWORD=${PIA_PASSWORD}
             - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60 --mute-replay-warnings --mssfix 1460
-            - OPENVPN_CONFIG=CA Vancouver
+            - OPENVPN_CONFIG=CA Toronto
             - LOCAL_NETWORK=192.168.7.0/24
             - PUID=${PUID}
             - PGID=${PGID}
             - TZ=${TZ}
-            - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
+            - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=false
             - TRANSMISSION_RPC_HOST_WHITELIST="127.0.0.1,192.168.7.*"
-            - TRANSMISSION_RPC_PASSWORD=benflix
-            - TRANSMISSION_RPC_USERNAME=benflix
+            - TRANSMISSION_RPC_PORT=9091
             - TRANSMISSION_UMASK=002
             - TRANSMISSION_RATIO_LIMIT=0.01
             - TRANSMISSION_RATIO_LIMIT_ENABLED=true
