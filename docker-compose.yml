@@ -11,7 +11,7 @@ volumes:
             device: ":/mnt/array1/media"
 services:
     portainer:
-        image: portainer/portainer
+        image: portainer/portainer-ce
         container_name: portainer
         restart: always
         command: -H unix:///var/run/docker.sock
