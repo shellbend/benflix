@@ -19,8 +19,8 @@ services:
             - "9000:9000"
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-            - ${USERDIR}/docker/portainer/data:/data
-            - ${USERDIR}/docker/shared:/shared
+            - ./portainer/data:/data
+            - ./shared:/shared
         environment:
             - TZ=${TZ}
     organizr:
@@ -28,8 +28,8 @@ services:
         restart: always
         image: organizr/organizr:arm64
         volumes:
-            - ${USERDIR}/docker/organizr:/config
-            - ${USERDIR}/docker/shared:/shared
+            - ./organizr:/config
+            - ./shared:/shared
         ports:
             - "8080:80"
         environment:
@@ -59,8 +59,8 @@ services:
             - 1.0.0.1
         volumes:
             - /etc/localtime:/etc/localtime:ro
-            - ${USERDIR}/docker/transmission-vpn:/data
-            - ${USERDIR}/docker/shared:/shared
+            - ./transmission-vpn:/data
+            - ./shared:/shared
             - /mnt/media/torrents/watch:/data/watch
             - /mnt/media/torrents/completed:/data/completed
             - /mnt/media/torrents/incomplete:/data/incomplete
@@ -92,13 +92,13 @@ services:
         image: linuxserver/radarr
         container_name: radarr
         volumes:
-            - ${USERDIR}/docker/radarr:/config
+            - ./radarr:/config
             - /mnt/media/torrents/watch:/data/watch
             - /mnt/media/torrents/completed:/data/completed
             - /mnt/media/torrents/incomplete:/data/incomplete
-            - media:/media
+            - ./media:/media
             - /etc/localtime:/etc/localtime:ro
-            - ${USERDIR}/docker/shared:/shared
+            - ./shared:/shared
         ports:
             - "7878:7878"
         restart: always
@@ -110,13 +110,13 @@ services:
         image: linuxserver/sonarr
         container_name: sonarr
         volumes:
-            - ${USERDIR}/docker/sonarr:/config
+            - ./sonarr:/config
             - /mnt/media/torrents/watch:/data/watch
             - /mnt/media/torrents/completed:/data/completed
             - /mnt/media/torrents/incomplete:/data/incomplete
-            - media:/media
+            - ./media:/media
             - /etc/localtime:/etc/localtime:ro
-            - ${USERDIR}/docker/shared:/shared
+            - ./shared:/shared
         ports:
             - "8989:8989"
         restart: always
@@ -128,9 +128,9 @@ services:
         image: linuxserver/bazarr
         container_name: bazarr
         volumes:
-            - ${USERDIR}/docker/bazarr:/config
+            - ./bazarr:/config
             - /etc/localtime:/etc/localtime:ro
-            - ${USERDIR}/docker/shared:/shared
+            - ./shared:/shared
             - /mnt/media/shows:/tv
             - /mnt/media/movies:/movies
         ports:
@@ -144,9 +144,9 @@ services:
         image: linuxserver/jackett
         container_name: jackett
         volumes:
-            - ${USERDIR}/docker/jackett:/config
+            - ./jackett:/config
             - /etc/localtime:/etc/localtime:ro
-            - ${USERDIR}/docker/shared:/shared
+            - ./shared:/shared
         ports:
             - "9117:9117"
         restart: always
@@ -158,8 +158,8 @@ services:
         image: linuxserver/ombi
         container_name: ombi
         volumes:
-            - ${USERDIR}/docker/ombi:/config
-            - ${USERDIR}/docker/shared:/shared
+            - ./ombi:/config
+            - ./shared:/shared
         ports:
             - "3579:3579"
         restart: always
@@ -190,8 +190,8 @@ services:
             - 127.0.0.1
             - 1.1.1.1
         volumes:
-            - ${USERDIR}/docker/pihole/pihole:/etc/pihole
-            - ${USERDIR}/docker/pihole/dnsmasq.d:/etc/pihole/dnsmasq.d
+            - ./pihole/pihole:/etc/pihole
+            - ./pihole/dnsmasq.d:/etc/pihole/dnsmasq.d
         cap_add:
             - NET_ADMIN
         restart: unless-stopped
