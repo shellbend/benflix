@@ -59,11 +59,9 @@ services:
             - 1.0.0.1
         volumes:
             - /etc/localtime:/etc/localtime:ro
-            - ./transmission-vpn:/data
+            - ./transmission-vpn:/config
             - ./shared:/shared
-            - /mnt/media/torrents/watch:/data/watch
-            - /mnt/media/torrents/completed:/data/completed
-            - /mnt/media/torrents/incomplete:/data/incomplete
+            - media:/media
         logging:
             driver: "json-file"
             options:
@@ -79,9 +77,11 @@ services:
             - PUID=${PUID}
             - PGID=${PGID}
             - TZ=${TZ}
+            - TRANSMISSION_HOME=/config/transmission-home
+            - TRANSMISSION_DOWNLOAD_DIR=/media/torrents/completed
+            - TRANSMISSION_INCOMPLETE_DIR=/media/torrents/incomplete
+            - TRANSMISSION_WATCH_DIR=/media/torrents/watch
             - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=false
-            - TRANSMISSION_RPC_HOST_WHITELIST="127.0.0.1,192.168.7.*"
-            - TRANSMISSION_RPC_PORT=9091
             - TRANSMISSION_UMASK=002
             - TRANSMISSION_RATIO_LIMIT=0.01
             - TRANSMISSION_RATIO_LIMIT_ENABLED=true
@@ -92,13 +92,10 @@ services:
         image: linuxserver/radarr
         container_name: radarr
         volumes:
-            - ./radarr:/config
-            - /mnt/media/torrents/watch:/data/watch
-            - /mnt/media/torrents/completed:/data/completed
-            - /mnt/media/torrents/incomplete:/data/incomplete
-            - ./media:/media
             - /etc/localtime:/etc/localtime:ro
+            - ./radarr:/config
             - ./shared:/shared
+            - media:/media
         ports:
             - "7878:7878"
         restart: always
@@ -110,13 +107,10 @@ services:
         image: linuxserver/sonarr
         container_name: sonarr
         volumes:
-            - ./sonarr:/config
-            - /mnt/media/torrents/watch:/data/watch
-            - /mnt/media/torrents/completed:/data/completed
-            - /mnt/media/torrents/incomplete:/data/incomplete
-            - ./media:/media
             - /etc/localtime:/etc/localtime:ro
+            - ./sonarr:/config
             - ./shared:/shared
+            - media:/media
         ports:
             - "8989:8989"
         restart: always
@@ -128,11 +122,10 @@ services:
         image: linuxserver/bazarr
         container_name: bazarr
         volumes:
-            - ./bazarr:/config
             - /etc/localtime:/etc/localtime:ro
+            - ./bazarr:/config
             - ./shared:/shared
-            - /mnt/media/shows:/tv
-            - /mnt/media/movies:/movies
+            - media:/media
         ports:
             - "6767:6767"
         restart: always
