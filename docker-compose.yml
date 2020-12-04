@@ -59,7 +59,8 @@ services:
             - 1.0.0.1
         volumes:
             - /etc/localtime:/etc/localtime:ro
-            - ./transmission-vpn:/config
+            - ./transmission-vpn/config:/config
+            - ./transmission-vpn/data:/data
             - ./shared:/shared
             - media:/media
         logging:
@@ -77,13 +78,14 @@ services:
             - PUID=${PUID}
             - PGID=${PGID}
             - TZ=${TZ}
-            - TRANSMISSION_HOME=/config/transmission-home
             - TRANSMISSION_DOWNLOAD_DIR=/media/torrents/completed
             - TRANSMISSION_INCOMPLETE_DIR=/media/torrents/incomplete
             - TRANSMISSION_WATCH_DIR=/media/torrents/watch
             - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=false
+            - TRANSMISSION_RPC_WHITELIST_ENABLED=false
+            - TRANSMISSION_RPC_WHITELIST="127.0.0.1,192.168.7.*"
             - TRANSMISSION_UMASK=002
-            - TRANSMISSION_RATIO_LIMIT=0.01
+            - TRANSMISSION_RATIO_LIMIT=1
             - TRANSMISSION_RATIO_LIMIT_ENABLED=true
             - TRANSMISSION_IDLE_SEEDING_LIMIT=1
             - TRANSMISSION_IDLE_SEEDING_LIMIT_ENABLED=true
