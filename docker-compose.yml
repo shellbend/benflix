@@ -46,7 +46,7 @@ services:
         command: --schedule "0 0 4 * * *" --cleanup
     transmission:
         container_name: transmission-vpn
-        image: haugene/transmission-openvpn:dev-arm64
+        image: haugene/transmission-openvpn:latest
         cap_add:
             - NET_ADMIN
         devices:
@@ -73,7 +73,8 @@ services:
             - OPENVPN_USERNAME=p7356348
             - OPENVPN_PASSWORD=${PIA_PASSWORD}
             - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60 --mute-replay-warnings --mssfix 1460
-            - OPENVPN_CONFIG=CA Toronto
+            - PIA_OPENVPN_CONFIG_BUNDLE=openvpn
+            - OPENVPN_CONFIG=ca_toronto
             - LOCAL_NETWORK=192.168.7.0/24
             - PUID=${PUID}
             - PGID=${PGID}
