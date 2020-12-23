@@ -170,8 +170,8 @@ services:
         ports:
             - "53:53/tcp"
             - "53:53/udp"
-            - "80:80/tcp"
-            - "443:443/tcp"
+            - "8081:80/tcp"
+            - "44300:443/tcp"
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
@@ -192,4 +192,43 @@ services:
         cap_add:
             - NET_ADMIN
         restart: unless-stopped
+    swag:
+        image: ghcr.io/linuxserver/swag
+        container_name: swag
+        cap_add:
+            - NET_ADMIN
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - TZ=${TZ}
+            - URL=bshelley.duckdns.org
+            - SUBDOMAINS=wildcard
+            - VALIDATION=duckdns
+            - FILE__DUCKDNSTOKEN=/run/secrets/duckdns_token
+        volumes:
+            - ./swag:/config
+        ports:
+            - 443:443
+            - 80:80
+        secrets:
+            - duckdns_token
+        restart: unless-stopped
+    duckdns:
+        image: ghcr.io/linuxserver/duckdns
+        container_name: duckdns
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - TZ=${TZ}
+            - SUBDOMAINS=bshelley,bensflix,benshelley
+            - FILE__TOKEN=/run/secrets/duckdns_token
+        secrets:
+            - duckdns_token
+        volumes:
+            - ./duckdns:/config
+        restart: unless-stopped
+
+secrets:
+    duckdns_token:
+        file: ${HOME}/duckdns_token
 
