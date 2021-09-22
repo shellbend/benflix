@@ -86,10 +86,6 @@ services:
             - TRANSMISSION_RPC_WHITELIST_ENABLED=false
             - TRANSMISSION_RPC_WHITELIST="127.0.0.1,192.168.7.*"
             - TRANSMISSION_UMASK=002
-            - TRANSMISSION_RATIO_LIMIT=1
-            - TRANSMISSION_RATIO_LIMIT_ENABLED=true
-            - TRANSMISSION_IDLE_SEEDING_LIMIT=1
-            - TRANSMISSION_IDLE_SEEDING_LIMIT_ENABLED=true
             - TRANSMISSION_WEB_UI=combustion
     radarr:
         image: linuxserver/radarr
