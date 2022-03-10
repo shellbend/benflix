@@ -7,7 +7,7 @@ volumes:
         driver: local
         driver_opts:
             type: nfs
-            o: addr=192.168.7.37,rw,nordirplus
+            o: addr=192.168.0.103,rw,nordirplus
             device: ":/mnt/array1/media"
 services:
     portainer:
@@ -26,7 +26,7 @@ services:
     organizr:
         container_name: organizr
         restart: always
-        image: organizr/organizr:arm64
+        image: organizr/organizr:latest
         volumes:
             - ./organizr:/config
             - ./shared:/shared
@@ -40,7 +40,7 @@ services:
     watchtower:
         container_name: watchtower
         restart: always
-        image: containrrr/watchtower:armhf-latest
+        image: containrrr/watchtower:latest
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
         command: --schedule "0 0 4 * * *" --cleanup
@@ -75,7 +75,7 @@ services:
             - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60 --mute-replay-warnings --mssfix 1460
             - PIA_OPENVPN_CONFIG_BUNDLE=openvpn
             - OPENVPN_CONFIG=ca_toronto
-            - LOCAL_NETWORK=192.168.7.0/24
+            - LOCAL_NETWORK=192.168.0.0/24
             - PUID=${PUID}
             - PGID=${PGID}
             - TZ=${TZ}
@@ -84,7 +84,7 @@ services:
             - TRANSMISSION_WATCH_DIR=/media/torrents/watch
             - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=false
             - TRANSMISSION_RPC_WHITELIST_ENABLED=false
-            - TRANSMISSION_RPC_WHITELIST="127.0.0.1,192.168.7.*"
+            - TRANSMISSION_RPC_WHITELIST="127.0.0.1,192.168.0.*"
             - TRANSMISSION_UMASK=002
             - TRANSMISSION_WEB_UI=combustion
     radarr:
@@ -173,7 +173,7 @@ services:
             - PGID=${PGID}
             - TZ=${TZ}
             - WEBPASSWORD=benflix
-            - ServerIP=192.168.7.66
+            - ServerIP=192.168.0.159
             - DNS1=1.1.1.1
             - DNS2=1.0.0.1
         # Must add --dns arg, otherwise pi-hole fails to start with
