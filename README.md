@@ -35,7 +35,7 @@ Set up docker to start at boot:
     sudo systemctl start docker
     sudo systemctl enable docker
 
-Check the docker isntallation:
+Check the docker installation:
 
     sudo docker run hello-world
 
@@ -95,7 +95,7 @@ already built in to Debian/Raspbian/Ubuntu linux. First, create the
     Description=Benflix Media Files
 
     [Mount]
-    What=192.168.7.37:/mnt/array1/media
+    What=192.168.0.103:/mnt/array1/media
     Where=/mnt/media
     Type=nfs
     Options=nordirplus
