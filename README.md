@@ -154,6 +154,7 @@ Ports
 | Radarr             |          7878 |          7878 |          |
 | Sonarr             |          8989 |          8989 |          |
 | Jackett            |          9117 |          9117 |          |
+| Prowlarr           |          9696 |          9696 |          |
 | Ombi               |          3579 |          3579 |          |
 | Pi-hole            |            53 |            53 | TCP/UDP  |
 | Pi-hole            |            80 |            80 | TCP      |

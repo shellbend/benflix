@@ -146,6 +146,18 @@ services:
             - PUID=${PUID}
             - PGID=${PGID}
             - TZ=${TZ}
+    prowlarr:
+        image: lscr.io/linuxserver/prowlarr:develop
+        container_name: prowlarr
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - TZ=${TZ}
+        volumes:
+            - ./prowlarr:/config
+        ports:
+            - 9696:9696
+        restart: unless-stopped
     ombi:
         image: linuxserver/ombi
         container_name: ombi
