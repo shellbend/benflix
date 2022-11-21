@@ -68,10 +68,10 @@ services:
             options:
                 max-size: "500k"
                 max-file: "10"
+        secrets:
+            - openvpn_creds
         environment:
             - OPENVPN_PROVIDER=PIA
-            - OPENVPN_USERNAME=p7356348
-            - OPENVPN_PASSWORD=${PIA_PASSWORD}
             - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60 --mute-replay-warnings --mssfix 1460
             - PIA_OPENVPN_CONFIG_BUNDLE=openvpn
             - OPENVPN_CONFIG=ca_toronto
@@ -224,5 +224,7 @@ services:
 
 secrets:
     duckdns_token:
-        file: ${HOME}/duckdns_token
+        file: ./secrets/duckdns_token
+    openvpn_creds:
+        file: ./secrets/openvpn_creds
 
