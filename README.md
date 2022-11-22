@@ -103,7 +103,7 @@ Next, create the `/etc/systemd/system/mnt-media.mount` file:
     What=192.168.0.103:/mnt/array1/media
     Where=/mnt/media
     Type=nfs
-    Options=nordirplus
+    Options=nordirplus,vers=3
 
     [Install]
     WantedBy=multi-user.target
