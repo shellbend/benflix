@@ -88,8 +88,13 @@ Mount NAS Media Shares
 
 The media files themselves will be stored on the NAS, so we'll need to set up
 an automount for it. We'll use `systemd` rather than `autofs` since it is
-already built in to Debian/Raspbian/Ubuntu linux. First, create the
-`/etc/systemd/system/mnt-media.mount` file:
+already built in to Debian/Raspbian/Ubuntu linux.  It will be a Network File
+System (NFS) mount, so we'll need to ensure that the `nfs-common` package is
+installed:
+
+    sudo apt install nfs-common
+
+Next, create the `/etc/systemd/system/mnt-media.mount` file:
 
     [Unit]
     Description=Benflix Media Files
