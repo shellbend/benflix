@@ -20,7 +20,7 @@ services:
             - TZ=${TZ}
             - VERSION=docker
         volumes:
-            - ./plex:/config
+            - ./config/plex:/config
             - media:/media
         devices:
             - "/dev/dri:/dev/dri"
@@ -34,8 +34,8 @@ services:
             - "9000:9000"
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-            - ./portainer/data:/data
-            - ./shared:/shared
+            - ./config/portainer/data:/data
+            - ./config/shared:/shared
         environment:
             - TZ=${TZ}
     organizr:
@@ -43,8 +43,8 @@ services:
         restart: always
         image: organizr/organizr:latest
         volumes:
-            - ./organizr:/config
-            - ./shared:/shared
+            - ./config/organizr:/config
+            - ./config/shared:/shared
         ports:
             - "8080:80"
         environment:
@@ -74,9 +74,9 @@ services:
             - 1.0.0.1
         volumes:
             - /etc/localtime:/etc/localtime:ro
-            - ./transmission-vpn/config:/config
-            - ./transmission-vpn/data:/data
-            - ./shared:/shared
+            - ./config/transmission-vpn/config:/config
+            - ./config/transmission-vpn/data:/data
+            - ./config/shared:/shared
             - media:/media
         logging:
             driver: "json-file"
@@ -107,8 +107,8 @@ services:
         container_name: radarr
         volumes:
             - /etc/localtime:/etc/localtime:ro
-            - ./radarr:/config
-            - ./shared:/shared
+            - ./config/radarr:/config
+            - ./config/shared:/shared
             - media:/media
         ports:
             - "7878:7878"
@@ -122,8 +122,8 @@ services:
         container_name: sonarr
         volumes:
             - /etc/localtime:/etc/localtime:ro
-            - ./sonarr:/config
-            - ./shared:/shared
+            - ./config/sonarr:/config
+            - ./config/shared:/shared
             - media:/media
         ports:
             - "8989:8989"
@@ -137,8 +137,8 @@ services:
         container_name: bazarr
         volumes:
             - /etc/localtime:/etc/localtime:ro
-            - ./bazarr:/config
-            - ./shared:/shared
+            - ./config/bazarr:/config
+            - ./config/shared:/shared
             - media:/media
         ports:
             - "6767:6767"
@@ -155,7 +155,7 @@ services:
             - PGID=${PGID}
             - TZ=${TZ}
         volumes:
-            - ./prowlarr:/config
+            - ./config/prowlarr:/config
         ports:
             - 9696:9696
         restart: unless-stopped
@@ -163,8 +163,8 @@ services:
         image: linuxserver/ombi
         container_name: ombi
         volumes:
-            - ./ombi:/config
-            - ./shared:/shared
+            - ./config/ombi:/config
+            - ./config/shared:/shared
         ports:
             - "3579:3579"
         restart: always
@@ -196,8 +196,8 @@ services:
             - 127.0.0.1
             - 1.1.1.1
         volumes:
-            - ./pihole/pihole:/etc/pihole
-            - ./pihole/dnsmasq.d:/etc/pihole/dnsmasq.d
+            - ./config/pihole/pihole:/etc/pihole
+            - ./config/pihole/dnsmasq.d:/etc/pihole/dnsmasq.d
         cap_add:
             - NET_ADMIN
         restart: unless-stopped
@@ -215,7 +215,7 @@ services:
             - VALIDATION=duckdns
             - FILE__DUCKDNSTOKEN=/run/secrets/duckdns_token
         volumes:
-            - ./swag:/config
+            - ./config/swag:/config
         ports:
             - 443:443
             - 80:80
@@ -234,12 +234,12 @@ services:
         secrets:
             - duckdns_token
         volumes:
-            - ./duckdns:/config
+            - ./config/duckdns:/config
         restart: unless-stopped
 
 secrets:
     duckdns_token:
-        file: ./secrets/duckdns_token
+        file: ./config/secrets/duckdns_token
     openvpn_creds:
-        file: ./secrets/openvpn_creds
+        file: ./config/secrets/openvpn_creds
 
