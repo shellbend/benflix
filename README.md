@@ -14,83 +14,150 @@ Server 19.10][2].
 Install Docker on Ubuntu
 -------------------------
 
-    sudo apt-get install \
-        apt-transport-https \
-        ca-certificates \
-        curl \
-        software-properties-common 
+Install the Docker engine on Ubuntu using the apt repository by following these
+[instructions](https://docs.docker.com/engine/install/ubuntu/).
 
-The article recommends installing Docker from its PPA
+### Set up the repository
 
-    sudo add-apt-repository \
-        "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-    sudo apt-get update && sudo apt-get install docker-ce
+1. Update the `apt` package index and install some required packages.
 
-Those instructions are likely outdated, and it's probably possible to simply:
+        sudo apt update
 
-    sudo apt install docker.io
+        sudo apt install \
+            ca-certificates \
+            curl \
+            gnupg
 
-Set up docker to start at boot:
+2. Add Docker's official GPG key:
 
-    sudo systemctl start docker
-    sudo systemctl enable docker
+        sudo mkdir -m 0755 -p /etc/apt/keyrings
 
-Check the docker installation:
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+            sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-    sudo docker run hello-world
+3. Use the following to set up the repository:
+
+        echo \
+            "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] \
+            https://download.docker.com/linux/ubuntu \
+            "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+### Install Docker Engine and Compose
+
+1. Update the `apt` package index:
+
+        sudo apt update
+
+2. Install Docker Engine, containerd, and Docker Compose:
+
+        sudo apt install \
+            docker-ce \
+            docker-ce-cli \
+            containerd.io \
+            docker-buildx-plugin \
+            docker-compose-plugin
+
+3. Verify that the Docker Engine installation is successful by running the
+   `hello-world` image:
+
+        sudo docker run hello-world
+
+Docker is now installed, and the `docker` user group exists, but doesn't contain
+any users, which is why `sudo` is required to run Docker commands. Next, we'll
+allow non-privileged users to run Docker commands.
+
+### Allow Non-Root Users to Run Docker without Sudo
+
+1. Create the `docker` group:
+
+        sudo groupadd docker
+
+2. Add your user to the `docker` group:
+
+        sudo usermod -aG docker $USER
+
+3. Log out and log back in so that your group membership is re-evaluated. You
+   can also run the following command to activate the changes to groups:
+
+        newgrp docker
+
+4. Verify that you can run `docker` commands without `sudo`:
+
+        docker run hello-world
+
+    This command downloads a test image and runs it in a container. When the
+    container runs, it prints a message and exits.
+
+    If you initially ran Docker CLI commands using sudo before adding your user
+    to the docker group, you may see the following error:
+
+        WARNING: Error loading config file: /home/user/.docker/config.json - stat
+        /home/user/.docker/config.json: permission denied This error indicates that
+        the permission settings for the ~/.docker/ directory are incorrect, due to
+        having used the sudo command earlier.
+
+    To fix this problem, either remove the `~/.docker/` directory (it’s recreated
+    automatically, but any custom settings are lost), or change its ownership
+    and permissions using the following commands:
+
+        sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
+        sudo chmod g+rwx "$HOME/.docker" -R
 
 
-Install Docker-Compose
-----------------------
+Setup Environment Variables and Secrets for Benflix
+---------------------------------------------------
 
-    sudo apt install docker-compose
+Obtain the group ID of the `docker` group:
 
+    getent group docker | cut -d: -f3
 
-Add Linux User to Docker Group
-------------------------------
-
-    sudo usermod -aG docker ${USER}
-
-
-Setup Environment Variables for Docker
---------------------------------------
-
-Edit the `/etc/environment` file to add:
+Next, edit your `~/.bashrc` file to add:
 
     PUID=1000
     PGID=<docker group id>
     TZ="America/Phoenix"
     USERDIR="/home/<username>"
-    PIA_PASSWORD="******"
 
 Add any other private information, like passwords or API keys, as additional
 environment variables here.  If the container that needs the password supports
 Docker secrets, use those instead as anyone with access to your running
 container will have access to your environment variables and their values.
 
+### Create Docker Secrets
 
-Docker Folder and Permissions
------------------------------
+Create an empty `config` directory at the root of the repostiory to hold all of
+the configuration information for your containers, as well as your secret
+credentials:
 
-    mkdir ~/docker
-    sudo setfacl -Rdm g:docker:rwx ~/docker
-    sudo chmod -R 775 ~/docker
+    cd <repository>
+    mkdir -pv config/secrets
 
-Note that it may be necessary to install the `acl` package if you get a
-`sudo: setfacl: command not found` error.
+Next, create a `config/secrets/openvpn_creds` with your VPN provider username
+and credentials. For example:
 
-    sudo apt install acl
+    echo "p123456" > config/secrets/openvpn_creds
+    echo "super-secret-password" >> config/secrets/openvpn_creds
+
+Finally, add your duckdns token to a file called `config/secrets/duckdns_token`:
+
+    echo "abcd1234-abc1-def1-abc2-def2-ab1234de4321" > config/secrets/duckdns_token
+
+NOTE: Do **not** commit or add the `config/` directory or any of its contents to
+the git repository!
 
 
+Mount NAS Media Shares (Optional)
+---------------------------------
 
-Mount NAS Media Shares
-----------------------
-
-The media files themselves will be stored on the NAS, so we'll need to set up
-an automount for it. We'll use `systemd` rather than `autofs` since it is
-already built in to Debian/Raspbian/Ubuntu linux.  It will be a Network File
-System (NFS) mount, so we'll need to ensure that the `nfs-common` package is
-installed:
+The media files themselves will be stored on the NAS, which will be mounted as a
+[Docker volume](https://docs.docker.com/storage/volumes/) by Docker Compose.
+That volume will then be accessible to every container within the compose file.
+However, if you want to also configure the NFS volume to be persistently mounted
+in the Ubuntu host OS filesystem, you'll need to set up an automount for it.
+We'll use `systemd` rather than `autofs` since it is already built in to
+Debian/Raspbian/Ubuntu linux.  It will be a Network File System (NFS) mount, so
+we'll need to ensure that the `nfs-common` package is installed:
 
     sudo apt install nfs-common
 
