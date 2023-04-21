@@ -189,7 +189,7 @@ services:
             - PUID=${PUID}
             - PGID=${PGID}
             - TZ=${TZ}
-            - WEBPASSWORD=benflix
+            - WEBPASSWORD_FILE=/run/secrets/pihole_webpassword
             - ServerIP=192.168.0.130
             - DNS1=1.1.1.1
             - DNS2=1.0.0.1
@@ -202,8 +202,8 @@ services:
         volumes:
             - ./config/pihole/pihole:/etc/pihole
             - ./config/pihole/dnsmasq.d:/etc/pihole/dnsmasq.d
-        cap_add:
-            - NET_ADMIN
+        secrets:
+            - pihole_webpassword
         restart: unless-stopped
     swag:
         image: ghcr.io/linuxserver/swag
@@ -246,4 +246,6 @@ secrets:
         file: ./config/secrets/duckdns_token
     openvpn_creds:
         file: ./config/secrets/openvpn_creds
+    pihole_webpassword:
+        file: ./config/secrets/pihole_webpassword
 
