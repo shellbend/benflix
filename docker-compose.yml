@@ -180,7 +180,6 @@ services:
             - "53:53/tcp"
             - "53:53/udp"
             - "8081:80/tcp"
-            - "44300:443/tcp"
         # Never auto-update pihole to avoid network disruptions
         # See https://github.com/pi-hole/docker-pi-hole/#note-on-watchtower
         #     https://containrrr.dev/watchtower/container-selection/#full_exclude
