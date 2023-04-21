@@ -133,15 +133,22 @@ credentials:
     cd <repository>
     mkdir -pv config/secrets
 
-Next, create a `config/secrets/openvpn_creds` with your VPN provider username
+#### OpenVPN
+Create a `config/secrets/openvpn_creds` file with your VPN provider username
 and credentials. For example:
 
     echo "p123456" > config/secrets/openvpn_creds
     echo "super-secret-password" >> config/secrets/openvpn_creds
 
-Finally, add your duckdns token to a file called `config/secrets/duckdns_token`:
+#### DuckDNS
+Add your duckdns token to a file called `config/secrets/duckdns_token`:
 
     echo "abcd1234-abc1-def1-abc2-def2-ab1234de4321" > config/secrets/duckdns_token
+
+#### Pi-Hole
+Create an admin password for the Pi-hole web interface:
+
+    echo "pihole" > config/secrets/pihole_webpassword
 
 NOTE: Do **not** commit or add the `config/` directory or any of its contents to
 the git repository!
@@ -196,11 +203,11 @@ Finally, start and enable the automount:
     sudo systemctl enable mnt-media.automount
 
 
-Pi-hole
+Pi-Hole
 -------
 
-When using pi-hole on Ubuntu, it is necessary to disable its caching DNS stub
-resolver, which prevents pi-hole from listening on port 53.  Disable the stub
+When using Pi-hole on Ubuntu, it is necessary to disable its caching DNS stub
+resolver, which prevents Pi-hole from listening on port 53.  Disable the stub
 resolver by executing:
 
     sudo sed -r -i.orig 's/#?DNSStubListener=yes/DNSStubListener=no/g' /etc/systemd/resolved.conf
@@ -228,7 +235,6 @@ Ports
 | Prowlarr           |          9696 |          9696 |          |
 | Ombi               |          3579 |          3579 |          |
 | Pi-hole            |            53 |            53 | TCP/UDP  |
-| Pi-hole            |            80 |            80 | TCP      |
-| Pi-hole            |           443 |           443 | TCP      |
+| Pi-hole            |          8081 |            80 | TCP      |
 
 
