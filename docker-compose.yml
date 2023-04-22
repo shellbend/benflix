@@ -97,9 +97,6 @@ services:
             - TRANSMISSION_DOWNLOAD_DIR=/media/torrents/completed
             - TRANSMISSION_INCOMPLETE_DIR=/media/torrents/incomplete
             - TRANSMISSION_WATCH_DIR=/media/torrents/watch
-            - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=false
-            - TRANSMISSION_RPC_WHITELIST_ENABLED=false
-            - TRANSMISSION_RPC_WHITELIST="127.0.0.1,192.168.0.*"
             - TRANSMISSION_UMASK=002
             - TRANSMISSION_WEB_UI=combustion
     radarr:
