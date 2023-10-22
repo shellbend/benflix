@@ -98,7 +98,7 @@ services:
             - TRANSMISSION_INCOMPLETE_DIR=/media/torrents/incomplete
             - TRANSMISSION_WATCH_DIR=/media/torrents/watch
             - TRANSMISSION_UMASK=002
-            - TRANSMISSION_WEB_UI=combustion
+            - TRANSMISSION_WEB_UI=transmissionic
     radarr:
         image: linuxserver/radarr
         container_name: radarr
