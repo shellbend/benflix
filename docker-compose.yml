@@ -1,7 +1,6 @@
 # [Ultimate Smart Home Media Server with Docker and Ubuntu][1]
 #
 # [1]: https://www.smarthomebeginner.com/docker-home-media-server-2018-basic/
-version: "3.6"
 volumes:
     media:
         driver: local
