@@ -5,9 +5,9 @@ volumes:
     media:
         driver: local
         driver_opts:
-            type: nfs
-            o: addr=192.168.0.103,rw,nordirplus
-            device: ":/mnt/array1/media"
+            type: none
+            o: bind
+            device: /mnt/storage/benflix
 services:
     plex:
         image: lscr.io/linuxserver/plex:latest
