@@ -87,8 +87,8 @@ services:
         environment:
             - OPENVPN_PROVIDER=PIA
             - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60 --mute-replay-warnings --mssfix 1460
-            - PIA_OPENVPN_CONFIG_BUNDLE=openvpn
-            - OPENVPN_CONFIG=ca_toronto
+            - OPENVPN_CONFIG=ca_vancouver,panama,ca_montreal,ca_toronto
+            - PEER_DNS=true
             - LOCAL_NETWORK=192.168.0.0/24
             - PUID=${PUID}
             - PGID=${PGID}
@@ -96,8 +96,10 @@ services:
             - TRANSMISSION_DOWNLOAD_DIR=/media/torrents/completed
             - TRANSMISSION_INCOMPLETE_DIR=/media/torrents/incomplete
             - TRANSMISSION_WATCH_DIR=/media/torrents/watch
-            - TRANSMISSION_UMASK=002
             - TRANSMISSION_WEB_UI=transmissionic
+            - TRANSMISSION_PEER_PORT_RANDOM_ON_START=true
+            - TRANSMISSION_PORT_FORWARDING_ENABLED=true
+            - GLOBAL_APPLY_PERMISSIONS=false
     radarr:
         image: linuxserver/radarr
         container_name: radarr
