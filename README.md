@@ -126,7 +126,7 @@ container will have access to your environment variables and their values.
 
 ### Create Docker Secrets
 
-Create an empty `config` directory at the root of the repostiory to hold all of
+Create an empty `config` directory at the root of the repository to hold all of
 the configuration information for your containers, as well as your secret
 credentials:
 
