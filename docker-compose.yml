@@ -16,6 +16,7 @@ services:
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
+            - UMASK=022
             - TZ=${TZ}
             - VERSION=docker
         volumes:
@@ -49,6 +50,7 @@ services:
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
+            - UMASK=022
             - TZ=${TZ}
             - fmp="false"
     watchtower:
@@ -92,6 +94,7 @@ services:
             - LOCAL_NETWORK=192.168.0.0/24
             - PUID=${PUID}
             - PGID=${PGID}
+            - UMASK=022
             - TZ=${TZ}
             - TRANSMISSION_DOWNLOAD_DIR=/media/torrents/completed
             - TRANSMISSION_INCOMPLETE_DIR=/media/torrents/incomplete
@@ -114,6 +117,7 @@ services:
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
+            - UMASK=022
             - TZ=${TZ}
     sonarr:
         image: linuxserver/sonarr
@@ -129,6 +133,7 @@ services:
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
+            - UMASK=022
             - TZ=${TZ}
     bazarr:
         image: linuxserver/bazarr
@@ -144,6 +149,7 @@ services:
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
+            - UMASK=022
             - TZ=${TZ}
     flaresolverr:
         image: ghcr.io/flaresolverr/flaresolverr:latest
@@ -154,6 +160,7 @@ services:
             - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
             - PUID=${PUID}
             - PGID=${PGID}
+            - UMASK=022
             - TZ=${TZ}
         ports:
             - "8191:8191"
@@ -164,6 +171,7 @@ services:
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
+            - UMASK=022
             - TZ=${TZ}
         volumes:
             - ./config/prowlarr:/config
@@ -182,6 +190,7 @@ services:
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
+            - UMASK=022
             - TZ=${TZ}
     pihole:
         image: pihole/pihole:latest
@@ -199,6 +208,7 @@ services:
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
+            - UMASK=022
             - TZ=${TZ}
             - WEBPASSWORD_FILE=/run/secrets/pihole_webpassword
             - FTLCONF_LOCAL_IPV4=192.168.0.130
@@ -224,6 +234,7 @@ services:
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
+            - UMASK=022
             - TZ=${TZ}
             - URL=bshelley.duckdns.org
             - SUBDOMAINS=wildcard
@@ -243,6 +254,7 @@ services:
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
+            - UMASK=022
             - TZ=${TZ}
             - SUBDOMAINS=bshelley,bensflix,benshelley
             - FILE__TOKEN=/run/secrets/duckdns_token
