@@ -91,7 +91,7 @@ services:
             - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60 --mute-replay-warnings --mssfix 1460
             - OPENVPN_CONFIG=ca_vancouver,panama,ca_montreal,ca_toronto
             - PEER_DNS=true
-            - LOCAL_NETWORK=192.168.0.0/24
+            - LOCAL_NETWORK=192.168.1.0/24
             - PUID=${PUID}
             - PGID=${PGID}
             - UMASK=022
@@ -211,7 +211,7 @@ services:
             - UMASK=022
             - TZ=${TZ}
             - WEBPASSWORD_FILE=/run/secrets/pihole_webpassword
-            - FTLCONF_LOCAL_IPV4=192.168.0.130
+            - FTLCONF_LOCAL_IPV4=192.168.1.130
             - DNS1=1.1.1.1
             - DNS2=1.0.0.1
         # Must add --dns arg, otherwise pi-hole fails to start with
@@ -271,4 +271,3 @@ secrets:
         file: ./config/secrets/openvpn_creds
     pihole_webpassword:
         file: ./config/secrets/pihole_webpassword
-
