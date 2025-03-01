@@ -124,7 +124,7 @@ services:
             - NET_ADMIN
             - SYS_MODULE
         ports:
-            - 7878:7878
+            - "7878:7878"
         healthcheck:
             test: [ "CMD", "wget", "--spider", "-q", "http://127.0.0.1:41234/healthz" ]
             interval: 1m
@@ -177,7 +177,7 @@ services:
             - NET_ADMIN
             - SYS_MODULE
         ports:
-            - 8989:8989
+            - "8989:8989"
         healthcheck:
             test: [ "CMD", "wget", "--spider", "-q", "http://127.0.0.1:41235/healthz" ]
             interval: 1m
