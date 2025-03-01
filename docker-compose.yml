@@ -103,38 +103,112 @@ services:
             - TRANSMISSION_PEER_PORT_RANDOM_ON_START=true
             - TRANSMISSION_PORT_FORWARDING_ENABLED=true
             - GLOBAL_APPLY_PERMISSIONS=false
+    tailscale-radarr:
+        image: tailscale/tailscale:latest
+        container_name: ts-radarr
+        hostname: radarr
+        environment:
+            - TS_AUTHKEY=${TS_AUTHKEY}
+            - TS_STATE_DIR=/var/lib/tailscale
+            - TS_SERVE_CONFIG=/config/serve.json
+            - TS_USERSPACE=false
+            - TS_ENABLE_HEALTH_CHECK=true
+            - TS_LOCAL_ADDR_PORT=127.0.0.1:41234
+            - TS_EXTRA_ARGS=--accept-dns=true
+        volumes:
+            - ./config/ts-radarr/config:/config
+            - ./config/ts-radarr/state:/var/lib/tailscale
+        devices:
+            - /dev/net/tun:/dev/net/tun
+        cap_add:
+            - NET_ADMIN
+            - SYS_MODULE
+        ports:
+            - 7878:7878
+        healthcheck:
+            test: [ "CMD", "wget", "--spider", "-q", "http://127.0.0.1:41234/healthz" ]
+            interval: 1m
+            timeout: 10s
+            retries: 3
+            start_period: 10s
+        restart: always
     radarr:
         image: linuxserver/radarr
-        container_name: radarr
+        network_mode: service:tailscale-radarr
+        container_name: app-radarr
         volumes:
             - /etc/localtime:/etc/localtime:ro
             - ./config/radarr:/config
             - ./config/shared:/shared
             - media:/media
-        ports:
-            - "7878:7878"
-        restart: always
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
             - UMASK=022
             - TZ=${TZ}
+        depends_on:
+            tailscale-radarr:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD", "pgrep", "-f", "radarr"]
+            interval: 1m
+            timeout: 10s
+            retries: 3
+            start_period: 30s
+        restart: always
+    tailscale-sonarr:
+        image: tailscale/tailscale:latest
+        container_name: ts-sonarr
+        hostname: sonarr
+        environment:
+            - TS_AUTHKEY=${TS_AUTHKEY}
+            - TS_STATE_DIR=/var/lib/tailscale
+            - TS_SERVE_CONFIG=/config/serve.json
+            - TS_USERSPACE=false
+            - TS_ENABLE_HEALTH_CHECK=true
+            - TS_LOCAL_ADDR_PORT=127.0.0.1:41235
+            - TS_EXTRA_ARGS=--accept-dns=true
+        volumes:
+            - ./config/ts-sonarr/config:/config
+            - ./config/ts-sonarr/state:/var/lib/tailscale
+        devices:
+            - /dev/net/tun:/dev/net/tun
+        cap_add:
+            - NET_ADMIN
+            - SYS_MODULE
+        ports:
+            - 8989:8989
+        healthcheck:
+            test: [ "CMD", "wget", "--spider", "-q", "http://127.0.0.1:41235/healthz" ]
+            interval: 1m
+            timeout: 10s
+            retries: 3
+            start_period: 10s
+        restart: always
     sonarr:
         image: linuxserver/sonarr
-        container_name: sonarr
+        network_mode: service:tailscale-sonarr
+        container_name: app-sonarr
         volumes:
             - /etc/localtime:/etc/localtime:ro
             - ./config/sonarr:/config
             - ./config/shared:/shared
             - media:/media
-        ports:
-            - "8989:8989"
-        restart: always
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
             - UMASK=022
             - TZ=${TZ}
+        depends_on:
+            tailscale-sonarr:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD", "pgrep", "-f", "sonarr"]
+            interval: 1m
+            timeout: 10s
+            retries: 3
+            start_period: 30s
+        restart: always
     bazarr:
         image: linuxserver/bazarr
         container_name: bazarr
