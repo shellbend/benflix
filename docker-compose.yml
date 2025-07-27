@@ -89,7 +89,7 @@ services:
         environment:
             - OPENVPN_PROVIDER=PIA
             - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60 --mute-replay-warnings --mssfix 1460
-            - OPENVPN_CONFIG=ca_vancouver,panama,ca_montreal,ca_toronto
+            - OPENVPN_CONFIG=ca_toronto,ca_montreal,panama
             - PEER_DNS=true
             - LOCAL_NETWORK=${LOCAL_NETWORK}
             - PUID=${PUID}
