@@ -91,7 +91,7 @@ services:
             - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60 --mute-replay-warnings --mssfix 1460
             - OPENVPN_CONFIG=ca_vancouver,panama,ca_montreal,ca_toronto
             - PEER_DNS=true
-            - LOCAL_NETWORK=192.168.1.0/24
+            - LOCAL_NETWORK=${LOCAL_NETWORK}
             - PUID=${PUID}
             - PGID=${PGID}
             - UMASK=022
@@ -114,7 +114,6 @@ services:
             - TS_USERSPACE=false
             - TS_ENABLE_HEALTH_CHECK=true
             - TS_LOCAL_ADDR_PORT=127.0.0.1:41234
-            - TS_EXTRA_ARGS=--accept-dns=true
         volumes:
             - ./config/ts-radarr/config:/config
             - ./config/ts-radarr/state:/var/lib/tailscale
@@ -125,6 +124,10 @@ services:
             - SYS_MODULE
         ports:
             - "7878:7878"
+        dns:
+            - 127.0.0.1
+            - ${PIHOLE_IP}
+            - ${MAGIC_DNS}
         healthcheck:
             test: [ "CMD", "wget", "--spider", "-q", "http://127.0.0.1:41234/healthz" ]
             interval: 1m
@@ -167,7 +170,6 @@ services:
             - TS_USERSPACE=false
             - TS_ENABLE_HEALTH_CHECK=true
             - TS_LOCAL_ADDR_PORT=127.0.0.1:41235
-            - TS_EXTRA_ARGS=--accept-dns=true
         volumes:
             - ./config/ts-sonarr/config:/config
             - ./config/ts-sonarr/state:/var/lib/tailscale
@@ -178,6 +180,10 @@ services:
             - SYS_MODULE
         ports:
             - "8989:8989"
+        dns:
+            - 127.0.0.1
+            - ${PIHOLE_IP}
+            - ${MAGIC_DNS}
         healthcheck:
             test: [ "CMD", "wget", "--spider", "-q", "http://127.0.0.1:41235/healthz" ]
             interval: 1m
@@ -285,7 +291,7 @@ services:
             - UMASK=022
             - TZ=${TZ}
             - WEBPASSWORD_FILE=/run/secrets/pihole_webpassword
-            - FTLCONF_LOCAL_IPV4=192.168.1.130
+            - FTLCONF_LOCAL_IPV4=${PIHOLE_IP}
             - DNS1=1.1.1.1
             - DNS2=1.0.0.1
         # Must add --dns arg, otherwise pi-hole fails to start with
