@@ -246,7 +246,7 @@ services:
             - "8191:8191"
         restart: unless-stopped
     prowlarr:
-        image: lscr.io/linuxserver/prowlarr:develop
+        image: lscr.io/linuxserver/prowlarr:latest
         container_name: prowlarr
         environment:
             - PUID=${PUID}
