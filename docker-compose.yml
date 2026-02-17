@@ -109,6 +109,7 @@ services:
         hostname: radarr
         environment:
             - TS_AUTHKEY=${TS_AUTHKEY}
+            - TS_AUTH_ONCE=true
             - TS_STATE_DIR=/var/lib/tailscale
             - TS_SERVE_CONFIG=/config/serve.json
             - TS_USERSPACE=false
@@ -165,6 +166,7 @@ services:
         hostname: sonarr
         environment:
             - TS_AUTHKEY=${TS_AUTHKEY}
+            - TS_AUTH_ONCE=true
             - TS_STATE_DIR=/var/lib/tailscale
             - TS_SERVE_CONFIG=/config/serve.json
             - TS_USERSPACE=false
