@@ -53,13 +53,6 @@ services:
             - UMASK=022
             - TZ=${TZ}
             - fmp="false"
-    watchtower:
-        container_name: watchtower
-        restart: always
-        image: containrrr/watchtower:latest
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
-        command: --schedule "0 0 4 * * *" --cleanup
     transmission:
         container_name: transmission-vpn
         image: haugene/transmission-openvpn:latest
@@ -282,11 +275,6 @@ services:
             - "53:53/tcp"
             - "53:53/udp"
             - "8081:80/tcp"
-        # Never auto-update pihole to avoid network disruptions
-        # See https://github.com/pi-hole/docker-pi-hole/#note-on-watchtower
-        #     https://containrrr.dev/watchtower/container-selection/#full_exclude
-        labels:
-            - "com.centurylinklabs.watchtower.enable=false"
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
