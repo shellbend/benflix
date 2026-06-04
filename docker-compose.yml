@@ -222,6 +222,41 @@ services:
             retries: 3
             start_period: 30s
         restart: always
+    shelfmark:
+        image: ghcr.io/calibrain/shelfmark:latest
+        container_name: shelfmark
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - UMASK=022
+            - TZ=${TZ}
+        volumes:
+            - ./config/shelfmark:/config
+            - ./config/shared:/shared
+            - media:/media
+        ports:
+            - "8084:8084"
+        restart: unless-stopped
+    calibre-web-automated:
+        image: crocodilestick/calibre-web-automated:latest
+        container_name: calibre-web-automated
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - TZ=${TZ}
+            - HARDCOVER_TOKEN=${HARDCOVER_TOKEN}
+            - NETWORK_SHARE_MODE=false
+        volumes:
+            - ./config/calibre-web-automated/config:/config
+            - type: volume
+              source: media
+              target: /cwa-book-ingest
+              volume:
+                subpath: books
+            - ./config/calibre-web-automated/library:/calibre-library
+        ports:
+            - 8083:8083
+        restart: unless-stopped
     bazarr:
         image: linuxserver/bazarr
         container_name: bazarr

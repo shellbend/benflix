@@ -232,6 +232,8 @@ Ports
 | Bazarr             |          6868 |          6868 |          |
 | Radarr             |          7878 |          7878 |          |
 | Sonarr             |          8989 |          8989 |          |
+| Shelfmark          |          8084 |          8084 |          |
+| Calibre            |          8083 |          8083 |          |
 | Prowlarr           |          9696 |          9696 |          |
 | FlareSolverr       |          8191 |          8191 |          |
 | Ombi               |          3579 |          3579 |          |
