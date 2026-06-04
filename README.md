@@ -237,5 +237,6 @@ Ports
 | Ombi               |          3579 |          3579 |          |
 | Pi-hole            |            53 |            53 | TCP/UDP  |
 | Pi-hole            |          8081 |            80 | TCP      |
+| HomeAssistant      |          8123 |          8123 |          |
 
 

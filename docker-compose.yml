@@ -25,6 +25,18 @@ services:
         devices:
             - "/dev/dri:/dev/dri"
         restart: unless-stopped
+    homeassistant:
+        image: lscr.io/linuxserver/homeassistant:latest
+        container_name: homeassistant
+        network_mode: host
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - TZ=${TZ}
+        volumes:
+            - ./config/homeassistant:/config 
+        restart: unless-stopped
+        shm_size: '1gb'
     portainer:
         image: portainer/portainer-ce
         container_name: portainer
