@@ -46,7 +46,7 @@ services:
             - PGID=${PGID}
             - TZ=${TZ}
         volumes:
-            - ./config/homeassistant:/config 
+            - ./config/homeassistant:/config
         restart: unless-stopped
         shm_size: '1gb'
     portainer:
@@ -144,7 +144,7 @@ services:
             - UMASK=022
             - TZ=${TZ}
         healthcheck:
-            test: ["CMD", "pgrep", "-f", "radarr"]
+            test: [ "CMD", "pgrep", "-f", "radarr" ]
             interval: 1m
             timeout: 10s
             retries: 3
@@ -169,7 +169,7 @@ services:
             - UMASK=022
             - TZ=${TZ}
         healthcheck:
-            test: ["CMD", "pgrep", "-f", "sonarr"]
+            test: [ "CMD", "pgrep", "-f", "sonarr" ]
             interval: 1m
             timeout: 10s
             retries: 3
@@ -210,7 +210,7 @@ services:
               source: media
               target: /cwa-book-ingest
               volume:
-                subpath: books
+                  subpath: books
             - ./config/calibre-web-automated/library:/calibre-library
         ports:
             - 8083:8083
