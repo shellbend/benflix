@@ -26,6 +26,7 @@ services:
             - "/dev/dri:/dev/dri"
         restart: unless-stopped
     docktail:
+        container_name: docktail
         image: ghcr.io/marvinvr/docktail:latest
         restart: unless-stopped
         volumes:
@@ -54,8 +55,6 @@ services:
         container_name: portainer
         restart: always
         command: -H unix:///var/run/docker.sock
-        ports:
-            - "9000:9000"
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - ./config/portainer/data:/data
@@ -66,7 +65,6 @@ services:
             - "docktail.service.enable=true"
             - "docktail.service.name=portainer"
             - "docktail.service.port=9000"
-            - "docktail.service.protocol=https"
     organizr:
         container_name: organizr
         restart: always
@@ -90,8 +88,6 @@ services:
         devices:
             - "/dev/net/tun"
         restart: always
-        ports:
-            - "9091:9091"
         dns:
             - 1.1.1.1
             - 1.0.0.1
@@ -129,7 +125,6 @@ services:
             - "docktail.service.enable=true"
             - "docktail.service.name=transmission"
             - "docktail.service.port=9091"
-            - "docktail.service.protocol=https"
     radarr:
         image: linuxserver/radarr
         container_name: app-radarr
@@ -154,7 +149,6 @@ services:
             - "docktail.service.enable=true"
             - "docktail.service.name=radarr"
             - "docktail.service.port=7878"
-            - "docktail.service.protocol=https"
     sonarr:
         image: linuxserver/sonarr
         container_name: app-sonarr
@@ -179,7 +173,6 @@ services:
             - "docktail.service.enable=true"
             - "docktail.service.name=sonarr"
             - "docktail.service.port=8989"
-            - "docktail.service.protocol=https"
     shelfmark:
         image: ghcr.io/calibrain/shelfmark:latest
         container_name: shelfmark
@@ -255,15 +248,11 @@ services:
             - TZ=${TZ}
         volumes:
             - ./config/prowlarr:/config
-        ports:
-            - 9696:9696
         restart: unless-stopped
         labels:
             - "docktail.service.enable=true"
             - "docktail.service.name=prowlarr"
             - "docktail.service.port=9696"
-            - "docktail.service.direct=false"
-            - "docktail.service.protocol=https"
     ombi:
         image: linuxserver/ombi
         container_name: ombi
