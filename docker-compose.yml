@@ -65,6 +65,7 @@ services:
             - "docktail.service.enable=true"
             - "docktail.service.name=portainer"
             - "docktail.service.port=9000"
+            - "docktail.service.service-protocol=https"
     organizr:
         container_name: organizr
         restart: always
@@ -125,6 +126,7 @@ services:
             - "docktail.service.enable=true"
             - "docktail.service.name=transmission"
             - "docktail.service.port=9091"
+            - "docktail.service.service-protocol=https"
     radarr:
         image: linuxserver/radarr
         container_name: app-radarr
@@ -149,6 +151,7 @@ services:
             - "docktail.service.enable=true"
             - "docktail.service.name=radarr"
             - "docktail.service.port=7878"
+            - "docktail.service.service-protocol=https"
     sonarr:
         image: linuxserver/sonarr
         container_name: app-sonarr
@@ -173,6 +176,7 @@ services:
             - "docktail.service.enable=true"
             - "docktail.service.name=sonarr"
             - "docktail.service.port=8989"
+            - "docktail.service.service-protocol=https"
     shelfmark:
         image: ghcr.io/calibrain/shelfmark:latest
         container_name: shelfmark
@@ -253,6 +257,7 @@ services:
             - "docktail.service.enable=true"
             - "docktail.service.name=prowlarr"
             - "docktail.service.port=9696"
+            - "docktail.service.service-protocol=https"
     ombi:
         image: linuxserver/ombi
         container_name: ombi
