@@ -81,14 +81,17 @@ services:
         volumes:
             - ./config/organizr:/config
             - ./config/shared:/shared
-        ports:
-            - "8080:80"
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
             - UMASK=022
             - TZ=${TZ}
             - fmp="false"
+        labels:
+            - "docktail.service.enable=true"
+            - "docktail.service.name=organizr"
+            - "docktail.service.port=80"
+            - "docktail.service.service-protocol=https"
     transmission:
         container_name: transmission-vpn
         image: haugene/transmission-openvpn:latest
@@ -197,9 +200,12 @@ services:
             - ./config/shelfmark:/config
             - ./config/shared:/shared
             - media:/media
-        ports:
-            - "8084:8084"
         restart: unless-stopped
+        labels:
+            - "docktail.service.enable=true"
+            - "docktail.service.name=shelfmark"
+            - "docktail.service.port=8084"
+            - "docktail.service.service-protocol=https"
     calibre-web-automated:
         image: crocodilestick/calibre-web-automated:latest
         container_name: calibre-web-automated
@@ -217,9 +223,12 @@ services:
               volume:
                   subpath: books
             - ./config/calibre-web-automated/library:/calibre-library
-        ports:
-            - 8083:8083
         restart: unless-stopped
+        labels:
+            - "docktail.service.enable=true"
+            - "docktail.service.name=calibre"
+            - "docktail.service.port=8083"
+            - "docktail.service.service-protocol=https"
     bazarr:
         image: linuxserver/bazarr
         container_name: bazarr
@@ -228,14 +237,17 @@ services:
             - ./config/bazarr:/config
             - ./config/shared:/shared
             - media:/media
-        ports:
-            - "6767:6767"
         restart: always
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
             - UMASK=022
             - TZ=${TZ}
+        labels:
+            - "docktail.service.enable=true"
+            - "docktail.service.name=bazarr"
+            - "docktail.service.port=6767"
+            - "docktail.service.service-protocol=https"
     flaresolverr:
         image: ghcr.io/flaresolverr/flaresolverr:latest
         container_name: flaresolverr
