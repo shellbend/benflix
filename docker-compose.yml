@@ -46,6 +46,19 @@ services:
         secrets:
             - tailscale_oauth_client_id
             - tailscale_oauth_client_secret
+    filebrowser:
+        container_name: filebrowser
+        image: filebrowser/filebrowser:latest
+        restart: unless-stopped
+        volumes:
+            - ./config/filebrowser/config:/config
+            - ./config/filebrowser/database:/database
+            - media:/srv
+        labels:
+            - "docktail.service.enable=true"
+            - "docktail.service.name=filebrowser"
+            - "docktail.service.port=80"
+            - "docktail.service.service-protocol=https"
     homeassistant:
         image: lscr.io/linuxserver/homeassistant:latest
         container_name: homeassistant
