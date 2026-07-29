@@ -2,384 +2,402 @@
 #
 # [1]: https://www.smarthomebeginner.com/docker-home-media-server-2018-basic/
 volumes:
-    media:
-        driver: local
-        driver_opts:
-            type: none
-            o: bind
-            device: /mnt/storage/benflix
+  media:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/storage/benflix
 services:
-    plex:
-        image: lscr.io/linuxserver/plex:latest
-        container_name: plex
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-            - VERSION=docker
-        volumes:
-            - ./config/plex:/config
-            - media:/media
-        ports:
-            - "32400:32400"
-            - "1900:1900/udp"
-            - "8324:8324"
-            - "32410:32410/udp"
-            - "32412:32412/udp"
-            - "32413:32413/udp"
-            - "32414:32414/udp"
-            - "32469:32469"
-        devices:
-            - "/dev/dri:/dev/dri"
-        restart: unless-stopped
-    docktail:
-        container_name: docktail
-        image: ghcr.io/marvinvr/docktail:latest
-        restart: unless-stopped
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock:ro
-            - /var/run/tailscale:/var/run/tailscale
-        environment:
-            - FILE__TAILSCALE_OAUTH_CLIENT_ID=/run/secrets/tailscale_oauth_client_id
-            - FILE__TAILSCALE_OAUTH_CLIENT_SECRET=/run/secrets/tailscale_oauth_client_secret
-        secrets:
-            - tailscale_oauth_client_id
-            - tailscale_oauth_client_secret
-    filebrowser:
-        container_name: filebrowser
-        image: filebrowser/filebrowser:latest
-        restart: unless-stopped
-        volumes:
-            - ./config/filebrowser/config:/config
-            - ./config/filebrowser/database:/database
-            - media:/srv
-        labels:
-            - "docktail.service.enable=true"
-            - "docktail.service.name=filebrowser"
-            - "docktail.service.port=80"
-            - "docktail.service.service-protocol=https"
-    homeassistant:
-        image: lscr.io/linuxserver/homeassistant:latest
-        container_name: homeassistant
-        network_mode: host
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - TZ=${TZ}
-        volumes:
-            - ./config/homeassistant:/config
-        restart: unless-stopped
-        shm_size: '1gb'
-    portainer:
-        image: portainer/portainer-ce
-        container_name: portainer
-        restart: always
-        command: -H unix:///var/run/docker.sock
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
-            - ./config/portainer/data:/data
-            - ./config/shared:/shared
-        environment:
-            - TZ=${TZ}
-        labels:
-            - "docktail.service.enable=true"
-            - "docktail.service.name=portainer"
-            - "docktail.service.port=9000"
-            - "docktail.service.service-protocol=https"
-    organizr:
-        container_name: organizr
-        restart: always
-        image: organizr/organizr:latest
-        volumes:
-            - ./config/organizr:/config
-            - ./config/shared:/shared
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-            - fmp="false"
-        labels:
-            - "docktail.service.enable=true"
-            - "docktail.service.name=organizr"
-            - "docktail.service.port=80"
-            - "docktail.service.service-protocol=https"
-    transmission:
-        container_name: transmission-vpn
-        image: haugene/transmission-openvpn:latest
-        cap_add:
-            - NET_ADMIN
-        devices:
-            - "/dev/net/tun"
-        restart: always
-        dns:
-            - 1.1.1.1
-            - 1.0.0.1
-        volumes:
-            - /etc/localtime:/etc/localtime:ro
-            - ./config/transmission-vpn/config:/config
-            - ./config/transmission-vpn/data:/data
-            - ./config/shared:/shared
-            - media:/media
-        logging:
-            driver: "json-file"
-            options:
-                max-size: "500k"
-                max-file: "10"
-        secrets:
-            - openvpn_creds
-        environment:
-            - OPENVPN_PROVIDER=PIA
-            - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60 --mute-replay-warnings --mssfix 1460
-            - OPENVPN_CONFIG=ca_toronto,ca_montreal,panama
-            - PEER_DNS=true
-            - LOCAL_NETWORK=${LOCAL_NETWORK}
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-            - TRANSMISSION_DOWNLOAD_DIR=/media/torrents/completed
-            - TRANSMISSION_INCOMPLETE_DIR=/media/torrents/incomplete
-            - TRANSMISSION_WATCH_DIR=/media/torrents/watch
-            - TRANSMISSION_WEB_UI=transmissionic
-            - TRANSMISSION_PEER_PORT_RANDOM_ON_START=true
-            - TRANSMISSION_PORT_FORWARDING_ENABLED=true
-            - GLOBAL_APPLY_PERMISSIONS=false
-        labels:
-            - "docktail.service.enable=true"
-            - "docktail.service.name=transmission"
-            - "docktail.service.port=9091"
-            - "docktail.service.service-protocol=https"
-    radarr:
-        image: linuxserver/radarr
-        container_name: app-radarr
-        volumes:
-            - /etc/localtime:/etc/localtime:ro
-            - ./config/radarr:/config
-            - ./config/shared:/shared
-            - media:/media
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-        healthcheck:
-            test: [ "CMD", "pgrep", "-f", "radarr" ]
-            interval: 1m
-            timeout: 10s
-            retries: 3
-            start_period: 30s
-        restart: always
-        labels:
-            - "docktail.service.enable=true"
-            - "docktail.service.name=radarr"
-            - "docktail.service.port=7878"
-            - "docktail.service.service-protocol=https"
-    sonarr:
-        image: linuxserver/sonarr
-        container_name: app-sonarr
-        volumes:
-            - /etc/localtime:/etc/localtime:ro
-            - ./config/sonarr:/config
-            - ./config/shared:/shared
-            - media:/media
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-        healthcheck:
-            test: [ "CMD", "pgrep", "-f", "sonarr" ]
-            interval: 1m
-            timeout: 10s
-            retries: 3
-            start_period: 30s
-        restart: always
-        labels:
-            - "docktail.service.enable=true"
-            - "docktail.service.name=sonarr"
-            - "docktail.service.port=8989"
-            - "docktail.service.service-protocol=https"
-    shelfmark:
-        image: ghcr.io/calibrain/shelfmark:latest
-        container_name: shelfmark
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-        volumes:
-            - ./config/shelfmark:/config
-            - ./config/shared:/shared
-            - media:/media
-        restart: unless-stopped
-        labels:
-            - "docktail.service.enable=true"
-            - "docktail.service.name=shelfmark"
-            - "docktail.service.port=8084"
-            - "docktail.service.service-protocol=https"
-    calibre-web-automated:
-        image: crocodilestick/calibre-web-automated:latest
-        container_name: calibre-web-automated
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - TZ=${TZ}
-            - HARDCOVER_TOKEN=${HARDCOVER_TOKEN}
-            - NETWORK_SHARE_MODE=false
-        volumes:
-            - ./config/calibre-web-automated/config:/config
-            - type: volume
-              source: media
-              target: /cwa-book-ingest
-              volume:
-                  subpath: books
-            - ./config/calibre-web-automated/library:/calibre-library
-        restart: unless-stopped
-        labels:
-            - "docktail.service.enable=true"
-            - "docktail.service.name=calibre"
-            - "docktail.service.port=8083"
-            - "docktail.service.service-protocol=https"
-    bazarr:
-        image: linuxserver/bazarr
-        container_name: bazarr
-        volumes:
-            - /etc/localtime:/etc/localtime:ro
-            - ./config/bazarr:/config
-            - ./config/shared:/shared
-            - media:/media
-        restart: always
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-        labels:
-            - "docktail.service.enable=true"
-            - "docktail.service.name=bazarr"
-            - "docktail.service.port=6767"
-            - "docktail.service.service-protocol=https"
-    flaresolverr:
-        image: ghcr.io/flaresolverr/flaresolverr:latest
-        container_name: flaresolverr
-        environment:
-            - LOG_LEVEL=${LOG_LEVEL:-info}
-            - LOG_HTML=${LOG_HTML:-false}
-            - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-        ports:
-            - "8191:8191"
-        restart: unless-stopped
-    prowlarr:
-        image: lscr.io/linuxserver/prowlarr:latest
-        container_name: prowlarr
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-        volumes:
-            - ./config/prowlarr:/config
-        restart: unless-stopped
-        labels:
-            - "docktail.service.enable=true"
-            - "docktail.service.name=prowlarr"
-            - "docktail.service.port=9696"
-            - "docktail.service.service-protocol=https"
-    ombi:
-        image: linuxserver/ombi
-        container_name: ombi
-        volumes:
-            - ./config/ombi:/config
-            - ./config/shared:/shared
-        ports:
-            - "3579:3579"
-        restart: always
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-    pihole:
-        image: pihole/pihole:latest
-        container_name: pihole
-        hostname: shepard
-        ports:
-            - "53:53/tcp"
-            - "53:53/udp"
-            - "8081:80/tcp"
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-            - WEBPASSWORD_FILE=/run/secrets/pihole_webpassword
-            - FTLCONF_LOCAL_IPV4=${PIHOLE_IP}
-            - DNS1=1.1.1.1
-            - DNS2=1.0.0.1
-        # Must add --dns arg, otherwise pi-hole fails to start with
-        # "DNS resolution is currently unavailable" message in the logs.
-        # See https://github.com/pi-hole/docker-pi-hole/issues/342
-        dns:
-            - 127.0.0.1
-            - 1.1.1.1
-        volumes:
-            - ./config/pihole/pihole:/etc/pihole
-            - ./config/pihole/dnsmasq.d:/etc/pihole/dnsmasq.d
-        secrets:
-            - pihole_webpassword
-        restart: unless-stopped
-    swag:
-        image: ghcr.io/linuxserver/swag
-        container_name: swag
-        cap_add:
-            - NET_ADMIN
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-            - URL=bshelley.duckdns.org
-            - SUBDOMAINS=wildcard
-            - VALIDATION=duckdns
-            - FILE__DUCKDNSTOKEN=/run/secrets/duckdns_token
-        volumes:
-            - ./config/swag:/config
-        ports:
-            - 443:443
-            - 80:80
-        secrets:
-            - duckdns_token
-        restart: unless-stopped
-    duckdns:
-        image: ghcr.io/linuxserver/duckdns
-        container_name: duckdns
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - UMASK=022
-            - TZ=${TZ}
-            - SUBDOMAINS=bshelley,bensflix,benshelley
-            - FILE__TOKEN=/run/secrets/duckdns_token
-        secrets:
-            - duckdns_token
-        volumes:
-            - ./config/duckdns:/config
-        restart: unless-stopped
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+      - VERSION=docker
+    volumes:
+      - ./config/plex:/config
+      - media:/media
+    ports:
+      - "32400:32400"
+      - "1900:1900/udp"
+      - "8324:8324"
+      - "32410:32410/udp"
+      - "32412:32412/udp"
+      - "32413:32413/udp"
+      - "32414:32414/udp"
+      - "32469:32469"
+    devices:
+      - "/dev/dri:/dev/dri"
+    restart: unless-stopped
+  docktail:
+    container_name: docktail
+    image: ghcr.io/marvinvr/docktail:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/tailscale:/var/run/tailscale
+    environment:
+      - FILE__TAILSCALE_OAUTH_CLIENT_ID=/run/secrets/tailscale_oauth_client_id
+      - FILE__TAILSCALE_OAUTH_CLIENT_SECRET=/run/secrets/tailscale_oauth_client_secret
+    secrets:
+      - tailscale_oauth_client_id
+      - tailscale_oauth_client_secret
+  filebrowser:
+    container_name: filebrowser
+    image: filebrowser/filebrowser:latest
+    restart: unless-stopped
+    volumes:
+      - ./config/filebrowser/config:/config
+      - ./config/filebrowser/database:/database
+      - media:/srv
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=filebrowser"
+      - "docktail.service.port=80"
+      - "docktail.service.service-protocol=https"
+  homeassistant:
+    image: lscr.io/linuxserver/homeassistant:latest
+    container_name: homeassistant
+    network_mode: host
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ./config/homeassistant:/config
+    restart: unless-stopped
+    shm_size: '1gb'
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    restart: always
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/portainer/data:/data
+      - ./config/shared:/shared
+    environment:
+      - TZ=${TZ}
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=portainer"
+      - "docktail.service.port=9000"
+      - "docktail.service.service-protocol=https"
+  organizr:
+    container_name: organizr
+    restart: always
+    image: organizr/organizr:latest
+    volumes:
+      - ./config/organizr:/config
+      - ./config/shared:/shared
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+      - fmp="false"
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=organizr"
+      - "docktail.service.port=80"
+      - "docktail.service.service-protocol=https"
+  transmission:
+    container_name: transmission-vpn
+    image: haugene/transmission-openvpn:latest
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - "/dev/net/tun"
+    restart: always
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./config/transmission-vpn/config:/config
+      - ./config/transmission-vpn/data:/data
+      - ./config/shared:/shared
+      - media:/media
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500k"
+        max-file: "10"
+    secrets:
+      - openvpn_creds
+    environment:
+      - OPENVPN_PROVIDER=PIA
+      - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60 --mute-replay-warnings --mssfix 1460
+      - OPENVPN_CONFIG=ca_toronto,ca_montreal,panama
+      - PEER_DNS=true
+      - LOCAL_NETWORK=${LOCAL_NETWORK}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+      - TRANSMISSION_DOWNLOAD_DIR=/media/torrents/completed
+      - TRANSMISSION_INCOMPLETE_DIR=/media/torrents/incomplete
+      - TRANSMISSION_WATCH_DIR=/media/torrents/watch
+      - TRANSMISSION_WEB_UI=transmissionic
+      - TRANSMISSION_PEER_PORT_RANDOM_ON_START=true
+      - TRANSMISSION_PORT_FORWARDING_ENABLED=true
+      - GLOBAL_APPLY_PERMISSIONS=false
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=transmission"
+      - "docktail.service.port=9091"
+      - "docktail.service.service-protocol=https"
+  radarr:
+    image: linuxserver/radarr
+    container_name: app-radarr
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./config/radarr:/config
+      - ./config/shared:/shared
+      - media:/media
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+    healthcheck:
+      test: [ "CMD", "pgrep", "-f", "radarr" ]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: always
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=radarr"
+      - "docktail.service.port=7878"
+      - "docktail.service.service-protocol=https"
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: app-sonarr
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./config/sonarr:/config
+      - ./config/shared:/shared
+      - media:/media
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+    healthcheck:
+      test: [ "CMD", "pgrep", "-f", "sonarr" ]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: always
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=sonarr"
+      - "docktail.service.port=8989"
+      - "docktail.service.service-protocol=https"
+  shelfmark:
+    image: ghcr.io/calibrain/shelfmark:latest
+    container_name: shelfmark
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+    volumes:
+      - ./config/shelfmark:/config
+      - ./config/shared:/shared
+      - media:/media
+    restart: unless-stopped
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=shelfmark"
+      - "docktail.service.port=8084"
+      - "docktail.service.service-protocol=https"
+  calibre-web-automated:
+    image: crocodilestick/calibre-web-automated:latest
+    container_name: calibre-web-automated
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - HARDCOVER_TOKEN=${HARDCOVER_TOKEN}
+      - NETWORK_SHARE_MODE=false
+    volumes:
+      - ./config/calibre-web-automated/config:/config
+      - type: volume
+        source: media
+        target: /cwa-book-ingest
+        volume:
+          subpath: books
+      - ./config/calibre-web-automated/library:/calibre-library
+    restart: unless-stopped
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=calibre"
+      - "docktail.service.port=8083"
+      - "docktail.service.service-protocol=https"
+  bazarr:
+    image: linuxserver/bazarr
+    container_name: bazarr
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./config/bazarr:/config
+      - ./config/shared:/shared
+      - media:/media
+    restart: always
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=bazarr"
+      - "docktail.service.port=6767"
+      - "docktail.service.service-protocol=https"
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+    ports:
+      - "8191:8191"
+    restart: unless-stopped
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+    volumes:
+      - ./config/prowlarr:/config
+    restart: unless-stopped
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=prowlarr"
+      - "docktail.service.port=9696"
+      - "docktail.service.service-protocol=https"
+  ombi:
+    image: linuxserver/ombi
+    container_name: ombi
+    volumes:
+      - ./config/ombi:/config
+      - ./config/shared:/shared
+    ports:
+      - "3579:3579"
+    restart: always
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    hostname: shepard
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "8081:80/tcp"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+      - WEBPASSWORD_FILE=/run/secrets/pihole_webpassword
+      - FTLCONF_LOCAL_IPV4=${PIHOLE_IP}
+      - DNS1=1.1.1.1
+      - DNS2=1.0.0.1
+    # Must add --dns arg, otherwise pi-hole fails to start with
+    # "DNS resolution is currently unavailable" message in the logs.
+    # See https://github.com/pi-hole/docker-pi-hole/issues/342
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+    volumes:
+      - ./config/pihole/pihole:/etc/pihole
+      - ./config/pihole/dnsmasq.d:/etc/pihole/dnsmasq.d
+    secrets:
+      - pihole_webpassword
+    restart: unless-stopped
+  swag:
+    image: ghcr.io/linuxserver/swag
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+      - URL=bshelley.duckdns.org
+      - SUBDOMAINS=wildcard
+      - VALIDATION=duckdns
+      - FILE__DUCKDNSTOKEN=/run/secrets/duckdns_token
+    volumes:
+      - ./config/swag:/config
+    ports:
+      - 443:443
+      - 80:80
+    secrets:
+      - duckdns_token
+    restart: unless-stopped
+  duckdns:
+    image: ghcr.io/linuxserver/duckdns
+    container_name: duckdns
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+      - SUBDOMAINS=bshelley,bensflix,benshelley
+      - FILE__TOKEN=/run/secrets/duckdns_token
+    secrets:
+      - duckdns_token
+    volumes:
+      - ./config/duckdns:/config
+    restart: unless-stopped
+
+  glance:
+    container_name: glance
+    image: glanceapp/glance
+    restart: unless-stopped
+    volumes:
+      - ./config/glance:/app/config
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=glance"
+      - "docktail.service.port=8080"
+      - "docktail.service.service-protocol=https"
 
 secrets:
-    duckdns_token:
-        file: ./config/secrets/duckdns_token
-    openvpn_creds:
-        file: ./config/secrets/openvpn_creds
-    pihole_webpassword:
-        file: ./config/secrets/pihole_webpassword
-    tailscale_oauth_client_id:
-        file: ./config/secrets/tailscale_oauth_client_id
-    tailscale_oauth_client_secret:
-        file: ./config/secrets/tailscale_oauth_client_secret
+  duckdns_token:
+    file: ./config/secrets/duckdns_token
+  openvpn_creds:
+    file: ./config/secrets/openvpn_creds
+  openvpn_user:
+    file: ./config/secrets/openvpn_user
+  openvpn_password:
+    file: ./config/secrets/openvpn_password
+  pihole_webpassword:
+    file: ./config/secrets/pihole_webpassword
+  tailscale_oauth_client_id:
+    file: ./config/secrets/tailscale_oauth_client_id
+  tailscale_oauth_client_secret:
+    file: ./config/secrets/tailscale_oauth_client_secret
+include:
+  - other.docker-compose.yml
