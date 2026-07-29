@@ -48,12 +48,11 @@ services:
       - tailscale_oauth_client_secret
   filebrowser:
     container_name: filebrowser
-    image: filebrowser/filebrowser:latest
+    image: gtstef/filebrowser:stable
     restart: unless-stopped
     volumes:
-      - ./config/filebrowser/config:/config
-      - ./config/filebrowser/database:/database
-      - media:/srv
+      - ./config/filebrowser-quantum:/home/filebrowser/data
+      - media:/media
     labels:
       - "docktail.service.enable=true"
       - "docktail.service.name=filebrowser"
