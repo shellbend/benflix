@@ -397,6 +397,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./config/glance:/app/config
+      - media:/media
     labels:
       - "docktail.service.enable=true"
       - "docktail.service.name=glance"
