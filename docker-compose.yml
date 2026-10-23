@@ -241,6 +241,26 @@ services:
       - "docktail.service.name=calibre"
       - "docktail.service.port=8083"
       - "docktail.service.service-protocol=https"
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+      - PORT=13378
+    volumes:
+      - ./config/audiobookshelf/config:/config
+      - ./config/audiobookshelf/metadata:/metadata
+      - ./config/shared:/shared
+      - media:/media
+    restart: unless-stopped
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=audiobookshelf"
+      - "docktail.service.port=13378"
+      - "docktail.service.service-protocol=https"
   bazarr:
     image: linuxserver/bazarr
     container_name: bazarr
